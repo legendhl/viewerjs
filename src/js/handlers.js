@@ -257,7 +257,7 @@ export default {
             this.exit();
           }
         } else {
-          this.hide();
+          // this.hide();
         }
 
         break;
@@ -522,14 +522,17 @@ export default {
     const ratio = Number(this.options.zoomRatio) || 0.1;
     let delta = 1;
 
-    if (event.deltaY) {
-      delta = event.deltaY > 0 ? 1 : -1;
-    } else if (event.wheelDelta) {
-      delta = -event.wheelDelta / 120;
-    } else if (event.detail) {
-      delta = event.detail > 0 ? 1 : -1;
+    if (event.ctrlKey) {
+      if (event.deltaY) {
+        delta = event.deltaY > 0 ? 1 : -1;
+      } else if (event.wheelDelta) {
+        delta = -event.wheelDelta / 120;
+      } else if (event.detail) {
+        delta = event.detail > 0 ? 1 : -1;
+      }
+      this.zoom(-delta * ratio, true, event);
+    } else if (event.deltaY) {
+      this.move(0, event.deltaY);
     }
-
-    this.zoom(-delta * ratio, true, event);
   },
 };

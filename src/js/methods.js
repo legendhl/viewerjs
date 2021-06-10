@@ -396,7 +396,18 @@ export default {
    */
   move(x, y = x) {
     const { imageData } = this;
-
+    // y > 0 向上滑动
+    // y < 0 向下滑动
+    const { height, top } = imageData;
+    const bodyHeight = document.body.offsetHeight;
+    if (height <= bodyHeight) {
+      return this;
+    }
+    if (y < 0 && y + top < 0) {
+      y = -top;
+    } else if (y > 0 && y + top + height > bodyHeight) {
+      y = bodyHeight - height - top;
+    }
     this.moveTo(
       isUndefined(x) ? x : imageData.x + Number(x),
       isUndefined(y) ? y : imageData.y + Number(y),
@@ -418,7 +429,7 @@ export default {
     x = Number(x);
     y = Number(y);
 
-    if (this.viewed && !this.played && options.movable) {
+    if (this.viewed && !this.played) {
       const oldX = imageData.x;
       const oldY = imageData.y;
       let changed = false;
@@ -719,21 +730,24 @@ export default {
 
       this.zooming = true;
 
-      if (_originalEvent) {
-        const offset = getOffset(this.viewer);
-        const center = pointers && Object.keys(pointers).length ? getPointersCenter(pointers) : {
-          pageX: _originalEvent.pageX,
-          pageY: _originalEvent.pageY,
-        };
+      // if (_originalEvent) {
+      //   const offset = getOffset(this.viewer);
+      //   const center = pointers && Object.keys(pointers).length ? getPointersCenter(pointers) : {
+      //     pageX: _originalEvent.pageX,
+      //     pageY: _originalEvent.pageY,
+      //   };
 
-        // Zoom from the triggering point of the event
-        imageData.x -= offsetWidth * (((center.pageX - offset.left) - x) / width);
-        imageData.y -= offsetHeight * (((center.pageY - offset.top) - y) / height);
-      } else {
-        // Zoom from the center of the image
-        imageData.x -= offsetWidth / 2;
-        imageData.y -= offsetHeight / 2;
-      }
+      //   // Zoom from the triggering point of the event
+      //   imageData.x -= offsetWidth * (((center.pageX - offset.left) - x) / width);
+      //   imageData.y -= offsetHeight * (((center.pageY - offset.top) - y) / height);
+      // } else {
+      //   // Zoom from the center of the image
+      //   imageData.x -= offsetWidth / 2;
+      //   imageData.y -= offsetHeight / 2;
+      // }
+      const bodyHeight = document.body.offsetHeight;
+      imageData.x -= offsetWidth / 2;
+      imageData.y = (bodyHeight - newHeight) / 2;
 
       imageData.left = imageData.x;
       imageData.top = imageData.y;
