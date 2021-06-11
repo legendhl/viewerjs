@@ -396,17 +396,21 @@ export default {
    */
   move(x, y = x) {
     const { imageData } = this;
-    // y > 0 向上滑动
-    // y < 0 向下滑动
-    const { height, top } = imageData;
+    // y > 0 鼠标向上滑动，图片向下滑动
+    // y < 0 鼠标向下滑动，图片向上滑动
+    const { width, height, top } = imageData;
+    const bodyWidth = document.body.offsetWidth;
     const bodyHeight = document.body.offsetHeight;
-    if (height <= bodyHeight) {
+    if (x !== 0 && width <= bodyWidth) {
       return this;
     }
-    if (y < 0 && y + top < 0) {
-      y = -top;
-    } else if (y > 0 && y + top + height > bodyHeight) {
+    if (y !== 0 && height <= bodyHeight) {
+      return this;
+    }
+    if (y < 0 && y + top + height < bodyHeight) { // 判断底部
       y = bodyHeight - height - top;
+    } else if (y > 0 && y + top > 0) { // 判断顶部
+      y = -top;
     }
     this.moveTo(
       isUndefined(x) ? x : imageData.x + Number(x),
@@ -710,8 +714,8 @@ export default {
 
       const newWidth = naturalWidth * ratio;
       const newHeight = naturalHeight * ratio;
-      const offsetWidth = newWidth - width;
-      const offsetHeight = newHeight - height;
+      // const offsetWidth = newWidth - width;
+      // const offsetHeight = newHeight - height;
       const oldRatio = width / naturalWidth;
 
       if (isFunction(options.zoom)) {
@@ -745,8 +749,9 @@ export default {
       //   imageData.x -= offsetWidth / 2;
       //   imageData.y -= offsetHeight / 2;
       // }
+      const bodyWidth = document.body.offsetWidth;
       const bodyHeight = document.body.offsetHeight;
-      imageData.x -= offsetWidth / 2;
+      imageData.x = (bodyWidth - newWidth) / 2;
       imageData.y = (bodyHeight - newHeight) / 2;
 
       imageData.left = imageData.x;

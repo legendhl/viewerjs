@@ -532,7 +532,7 @@ export default {
       }
       this.zoom(-delta * ratio, true, event);
     } else if (event.deltaY) {
-      this.move(0, event.deltaY);
+      this.move(0, -event.deltaY * 2);
     }
   },
 };
